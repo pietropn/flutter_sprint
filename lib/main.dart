@@ -1,19 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:hive_flutter/hive_flutter.dart';
-import 'services/auth_service.dart';
-import 'services/storage_service.dart';
+import 'providers/auth_provider.dart';
+import 'providers/student_provider.dart';
 import 'app.dart';
 
-Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Hive.initFlutter();
-  await StorageService.init(); // abre boxes e inicializa
+void main() {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => AuthService()),
-        ChangeNotifierProvider(create: (_) => StorageService.instance),
+        ChangeNotifierProvider(create: (_) => AuthProvider()),
+        ChangeNotifierProvider(create: (_) => StudentProvider()),
       ],
       child: MyApp(),
     ),

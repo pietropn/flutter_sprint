@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'pages/login_page.dart';
-import 'pages/home_page.dart';
+import 'pages/login/login_page.dart';
+import 'pages/home/home_page.dart';
 import 'pages/students/students_list_page.dart';
 import 'pages/students/student_form_page.dart';
 
