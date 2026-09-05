@@ -44,4 +44,9 @@ lib/
     ├── loading_overlay.dart          # Indicador visual de carregamento
     └── primary_button.dart           # Botão principal de ação
 ```
+PARTICIPANTES:
+- Pietro de Paula Nascimento (RM557000)
+- Victor Andrade Baptista de Sousa (RM555902)
+- Jhonatham Jesus de Souza Barros (RM559114)
+- Silvio Toshiaki Yokoyama (RM556716)
 ```
