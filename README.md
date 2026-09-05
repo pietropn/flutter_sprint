@@ -1,53 +1,47 @@
-# Euro Tech! - Sistema Educacional (Flutter)
-
-Aplicativo Flutter integrado à API REST Spring Boot (`Sprint_microservico`) com persistência local completa via `SharedPreferences`.
-
+# ## 📋 Funcionalidades e Critérios Atendidos
+### 💾 Persistência Local e Configuração (10 Pontos)
+Implementado centralizadamente em [`lib/services/preferences_service.dart`](lib/services/preferences_service.dart):
+1. **Manter Usuário Logado**: Token de acesso e dados do perfil salvos no `SharedPreferences`. O app realiza auto-login na inicialização e descarta os dados no logout.
+2. **Salvar Configurações**: URL da API personalizável e persistida através da tela de configurações.
+3. **Armazenar Preferências**: Alternância entre **Tema Escuro (Dark Mode)** e **Tema Claro**, além do preenchimento automático do e-mail de login ("Lembrar e-mail").
+4. **Cache Simples de Dados**: Os dados retornados da API (`/alunos`) são gravados localmente. Em caso de falha de conexão ou rede offline, o aplicativo continua funcional apresentando os dados do cache com indicação visual de "Modo Offline".
+### 🔗 Integração com API REST
+- Consumo dos endpoints REST da entidade `/alunos` (GET, POST, DELETE).
+- Validação frontend completa espelhando o backend (CPF com 11 dígitos numéricos, e-mail válido e campos obrigatórios).
+- Tratamento resiliente de falhas de comunicação (`SocketException`, timeouts e códigos de erro HTTP).
 ---
-
-## 🏆 Critério: Persistência Local e Configuração (10 pontos)
-
-O projeto implementa todos os 4 exemplos solicitados de persistência local utilizando a biblioteca oficial `shared_preferences`:
-
-| Funcionalidade | Implementação | Onde Encontrar |
-|---|---|---|
-| **1. Manter usuário logado** | Persiste o token de autenticação e os dados do usuário (`email`, `nome`). Ao abrir o app, a sessão é restaurada automaticamente via `AuthProvider` e o usuário vai direto para a `HomePage` sem precisar logar de novo. No logout, os dados são limpos. | [`PreferencesService.saveUserSession`](lib/services/preferences_service.dart), [`AuthProvider`](lib/providers/auth_provider.dart) |
-| **2. Salvar configurações** | Permite alterar e salvar a URL base da API do Spring Boot (`baseUrl`) diretamente pelo app na tela de Configurações (`http://localhost:8080`, `http://10.0.2.2:8080`, etc.). A URL personalizada é mantida entre inicializações. | [`PreferencesService.getApiUrl / setApiUrl`](lib/services/preferences_service.dart), [`SettingsPage`](lib/pages/settings/settings_page.dart) |
-| **3. Armazenar preferências** | Preferência de **Tema Escuro (Dark Mode) / Claro (Light Mode)** e opção **"Lembrar e-mail no login"** salvas e recuperadas no SharedPreferences. | [`ThemeProvider`](lib/providers/theme_provider.dart), [`LoginPage`](lib/pages/login/login_page.dart), [`SettingsPage`](lib/pages/settings/settings_page.dart) |
-| **4. Cache simples de dados** | Cache local da lista de alunos. Ao carregar dados da API (`GET /alunos`), a lista é gravada em formato JSON no SharedPreferences. Se o app estiver offline ou a API estiver fora do ar, o app exibe imediatamente os alunos do cache local com indicação visual. | [`StudentRepository`](lib/repositories/student_repository.dart), [`StudentProvider`](lib/providers/student_provider.dart) |
-
----
-
-## 🔌 Integração com a API (`Sprint_microservico`)
-
-- **Endpoints**: Consome o endpoint `/alunos` (GET, POST, DELETE).
-- **Validação de Modelo**: Alinhado com o DTO do backend Spring Boot (`nome`, `cpf` com 11 dígitos numéricos, `email` válido).
-- **Tratamento de Erros**: Captura e trata `SocketException` (servidor offline), timeouts e erros de validação HTTP (400, 404, 500).
-
----
-
-## 🚀 Como Executar
-
-### 1. Iniciar a API Spring Boot (`Sprint_microservico`)
-```bash
-cd Sprint_microservico
-./mvnw spring-boot:run
-# API disponível em http://localhost:8080
+## 📂 Estrutura de Pastas do Projeto
+```text
+lib/
+├── app.dart                          # Configuração do MaterialApp, temas e rotas
+├── main.dart                         # Ponto de entrada, inicialização do SharedPreferences
+├── routes.dart                       # Mapeamento de rotas nomeadas
+├── models/                           # Modelos de dados com serialização JSON e mapeamento API
+│   ├── student.dart                  # Entidade Aluno (nome, cpf, email, turma)
+│   └── user.dart                     # Entidade Usuário autenticado
+├── pages/                            # Interfaces de usuário (Telas)
+│   ├── home/home_page.dart           # Dashboard principal com status de cache e sessão
+│   ├── login/login_page.dart         # Tela de autenticação com opção "Lembrar e-mail"
+│   ├── settings/settings_page.dart   # Tela de configurações (URL da API, Tema, Cache)
+│   └── students/
+│       ├── student_form_page.dart    # Formulário de cadastro com validação de CPF e dados
+│       └── students_list_page.dart   # Listagem com pull-to-refresh e aviso de cache offline
+├── providers/                        # Gerenciamento de estado (ChangeNotifier)
+│   ├── auth_provider.dart            # Estado da sessão e credenciais
+│   ├── student_provider.dart         # Estado da lista de alunos e sincronização com cache
+│   └── theme_provider.dart           # Estado do tema claro/escuro persistido
+├── repositories/                     # Camada de abstração de dados (API + Cache local)
+│   ├── auth_repository.dart          # Repositório de autenticação e sessão
+│   └── student_repository.dart       # Repositório de alunos com suporte a fallback offline
+├── services/                         # Serviços de infraestrutura
+│   ├── api_service.dart              # Cliente HTTP com URL dinâmica e tratamento de erros
+│   └── preferences_service.dart      # Gerenciador de persistência SharedPreferences
+├── utils/                            # Constantes e funções utilitárias
+│   ├── constants.dart                # Chaves de armazenamento e URLs padrão
+│   └── validators.dart               # Validadores de CPF, e-mail e campos obrigatórios
+└── widgets/                          # Componentes de interface reutilizáveis
+    ├── custom_text_field.dart        # Campo de texto padronizado com validação
+    ├── loading_overlay.dart          # Indicador visual de carregamento
+    └── primary_button.dart           # Botão principal de ação
 ```
-
-### 2. Executar o Aplicativo Flutter
-```bash
-flutter pub get
-flutter run
-```
-
-> **Dica para Emuladores/Dispositivos Físicos:**
-> Abra a tela de **Configurações** (ícone de engrenagem no app) e selecione ou digite a URL da sua máquina (ex: `http://10.0.2.2:8080` para emulador Android padrão). A configuração será salva no SharedPreferences!
-
----
-
-## 🧪 Executar Testes Unitários de Persistência
-
-Para rodar os testes automatizados que validam a persistência local:
-```bash
-flutter test
 ```
