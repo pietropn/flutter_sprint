@@ -4,6 +4,13 @@ class User {
 
   User({required this.email, required this.name});
 
-  factory User.fromJson(Map<String, dynamic> j) => User(email: j['email'] ?? '', name: j['name'] ?? '');
-  Map<String, dynamic> toJson() => {'email': email, 'name': name};
+  factory User.fromJson(Map<String, dynamic> j) => User(
+        email: j['email']?.toString() ?? '',
+        name: j['name']?.toString() ?? '',
+      );
+
+  Map<String, dynamic> toJson() => {
+        'email': email,
+        'name': name,
+      };
 }

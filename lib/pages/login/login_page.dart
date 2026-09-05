@@ -6,13 +6,25 @@ import '../../widgets/primary_button.dart';
 import '../../utils/validators.dart';
 
 class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
+
   @override
   State<LoginPage> createState() => _LoginPageState();
 }
+
 class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
-  final _email = TextEditingController();
+  late final TextEditingController _email;
   final _pass = TextEditingController();
+  bool _remember = false;
+
+  @override
+  void initState() {
+    super.initState();
+    final auth = Provider.of<AuthProvider>(context, listen: false);
+    _remember = auth.rememberEmail;
+    _email = TextEditingController(text: auth.savedEmail ?? '');
+  }
 
   @override
   void dispose() {
@@ -25,40 +37,103 @@ class _LoginPageState extends State<LoginPage> {
     final auth = Provider.of<AuthProvider>(context, listen: false);
     if (!_formKey.currentState!.validate()) return;
     try {
-      await auth.login(_email.text.trim(), _pass.text.trim());
-      Navigator.of(context).pushReplacementNamed('/home');
+      await auth.login(
+        _email.text.trim(),
+        _pass.text.trim(),
+        remember: _remember,
+      );
+      if (mounted) {
+        Navigator.of(context).pushReplacementNamed('/home');
+      }
     } catch (e) {
-      final msg = e.toString();
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(e.toString()),
+            backgroundColor: Colors.red.shade700,
+          ),
+        );
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final auth = Provider.of<AuthProvider>(context);
+
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Euro Tech!'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings),
+            tooltip: 'Configurações de Conexão',
+            onPressed: () => Navigator.of(context).pushNamed('/settings'),
+          ),
+        ],
+      ),
       body: Center(
         child: SingleChildScrollView(
-          padding: EdgeInsets.all(20),
+          padding: const EdgeInsets.all(20),
           child: Card(
+            elevation: 4,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
             child: Padding(
-              padding: EdgeInsets.all(16),
+              padding: const EdgeInsets.all(20),
               child: ConstrainedBox(
-                constraints: BoxConstraints(maxWidth: 420),
+                constraints: const BoxConstraints(maxWidth: 420),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text('BEM VINDO(A)', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                    SizedBox(height: 12),
+                    const Icon(Icons.school, size: 48, color: Colors.blue),
+                    const SizedBox(height: 12),
+                    const Text(
+                      'BEM-VINDO(A)',
+                      style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 4),
+                    const Text(
+                      'Acesse o sistema educacional Euro Tech',
+                      style: TextStyle(fontSize: 13, color: Colors.grey),
+                    ),
+                    const SizedBox(height: 16),
                     Form(
                       key: _formKey,
                       child: Column(
                         children: [
-                          CustomTextField(label: 'Email', controller: _email, validator: validateEmail, keyboardType: TextInputType.emailAddress),
-                          CustomTextField(label: 'Senha', controller: _pass, validator: (v) => validateMinLength(v, 4), obscure: true),
-                          SizedBox(height: 8),
-                          PrimaryButton(onPressed: auth.loading ? (){} : _submit, label: 'Entrar', loading: auth.loading),
-                          if (auth.error != null) Padding(padding: EdgeInsets.only(top:8), child: Text(auth.error!, style: TextStyle(color: Colors.red))),
+                          CustomTextField(
+                            label: 'Email',
+                            controller: _email,
+                            validator: validateEmail,
+                            keyboardType: TextInputType.emailAddress,
+                          ),
+                          CustomTextField(
+                            label: 'Senha',
+                            controller: _pass,
+                            validator: (v) => validateMinLength(v, 4),
+                            obscure: true,
+                          ),
+                          CheckboxListTile(
+                            contentPadding: EdgeInsets.zero,
+                            title: const Text('Lembrar e-mail', style: TextStyle(fontSize: 14)),
+                            value: _remember,
+                            onChanged: (val) => setState(() => _remember = val ?? false),
+                            controlAffinity: ListTileControlAffinity.leading,
+                          ),
+                          const SizedBox(height: 8),
+                          PrimaryButton(
+                            onPressed: auth.loading ? () {} : _submit,
+                            label: 'Entrar',
+                            loading: auth.loading,
+                          ),
+                          if (auth.error != null)
+                            Padding(
+                              padding: const EdgeInsets.only(top: 8),
+                              child: Text(
+                                auth.error!,
+                                style: const TextStyle(color: Colors.red),
+                              ),
+                            ),
                         ],
                       ),
                     ),

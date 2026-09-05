@@ -6,7 +6,9 @@ class CustomTextField extends StatelessWidget {
   final String? Function(String?)? validator;
   final bool obscure;
   final TextInputType keyboardType;
+
   const CustomTextField({
+    super.key,
     required this.label,
     required this.controller,
     this.validator,
@@ -17,7 +19,7 @@ class CustomTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 6),
+      padding: const EdgeInsets.symmetric(vertical: 6),
       child: TextFormField(
         controller: controller,
         validator: validator,
@@ -25,7 +27,7 @@ class CustomTextField extends StatelessWidget {
         keyboardType: keyboardType,
         decoration: InputDecoration(
           labelText: label,
-          border: OutlineInputBorder(),
+          border: const OutlineInputBorder(),
           isDense: true,
         ),
       ),

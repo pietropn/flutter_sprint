@@ -3,10 +3,12 @@ import 'pages/login/login_page.dart';
 import 'pages/home/home_page.dart';
 import 'pages/students/students_list_page.dart';
 import 'pages/students/student_form_page.dart';
+import 'pages/settings/settings_page.dart';
 
 final Map<String, WidgetBuilder> appRoutes = {
-  '/login': (ctx) => LoginPage(),
-  '/home': (ctx) => HomePage(),
-  '/students': (ctx) => StudentsListPage(),
-  '/students/new': (ctx) => StudentFormPage(),
+  '/login': (ctx) => const LoginPage(),
+  '/home': (ctx) => const HomePage(),
+  '/students': (ctx) => const StudentsListPage(),
+  '/students/new': (ctx) => const StudentFormPage(),
+  '/settings': (ctx) => const SettingsPage(),
 };
