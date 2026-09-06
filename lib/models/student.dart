@@ -44,6 +44,7 @@ class Student {
         'nome': name,
         'cpf': cpf.replaceAll(RegExp(r'\D'), '').padLeft(11, '0'),
         'email': email,
+        'turma': turma,
       };
 
   Student copyWith({
