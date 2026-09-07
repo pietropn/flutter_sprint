@@ -4,6 +4,7 @@ import '../../providers/auth_provider.dart';
 import '../../providers/student_provider.dart';
 import '../../providers/theme_provider.dart';
 import '../../services/preferences_service.dart';
+import '../../services/api_service.dart';
 
 /// Tela de Configurações e Preferências locais do App.
 ///
@@ -51,6 +52,56 @@ class _SettingsPageState extends State<SettingsPage> {
           backgroundColor: Colors.green,
         ),
       );
+    }
+  }
+
+  bool _testando = false;
+
+  Future<void> _testarConexao() async {
+    // Testa com a URL que está no campo (mesmo que ainda não tenha sido
+    // salva), para o usuário poder validar antes de confirmar a alteração.
+    final urlDigitada = _apiUrlCtrl.text.trim();
+    if (urlDigitada.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Informe a URL da API antes de testar.')),
+      );
+      return;
+    }
+
+    setState(() => _testando = true);
+    final urlAnterior = _prefs.getApiUrl();
+    try {
+      // Usa temporariamente a URL do campo de texto para o teste.
+      await _prefs.setApiUrl(urlDigitada);
+      await ApiService.instance.get('/api/v1/alunos');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('✅ Conexão com a API funcionando! (GET /api/v1/alunos respondeu com sucesso)'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        showDialog(
+          context: context,
+          builder: (dCtx) => AlertDialog(
+            title: const Text('Falha ao conectar'),
+            content: SingleChildScrollView(child: Text(e.toString())),
+            actions: [
+              TextButton(onPressed: () => Navigator.of(dCtx).pop(), child: const Text('Entendi')),
+            ],
+          ),
+        );
+      }
+    } finally {
+      // Restaura a URL salva anteriormente caso o usuário não tenha
+      // confirmado o "Salvar Configuração de URL" para este teste.
+      if (urlDigitada != urlAnterior) {
+        await _prefs.setApiUrl(urlAnterior);
+      }
+      if (mounted) setState(() => _testando = false);
     }
   }
 
@@ -140,6 +191,21 @@ class _SettingsPageState extends State<SettingsPage> {
                       onPressed: _saveApiUrl,
                       icon: const Icon(Icons.save),
                       label: const Text('Salvar Configuração de URL'),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  SizedBox(
+                    width: double.infinity,
+                    child: OutlinedButton.icon(
+                      onPressed: _testando ? null : _testarConexao,
+                      icon: _testando
+                          ? const SizedBox(
+                              width: 16,
+                              height: 16,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
+                          : const Icon(Icons.wifi_tethering),
+                      label: Text(_testando ? 'Testando...' : 'Testar Conexão com a API'),
                     ),
                   ),
                 ],

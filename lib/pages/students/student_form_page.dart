@@ -58,7 +58,7 @@ class _StudentFormPageState extends State<StudentFormPage> {
     final prov = Provider.of<StudentProvider>(context, listen: false);
     if (!_formKey.currentState!.validate()) return;
     try {
-      await prov.add(
+      final synced = await prov.add(
         name: _name.text.trim(),
         cpf: _cpf.text.trim(),
         email: _email.text.trim(),
@@ -84,9 +84,15 @@ class _StudentFormPageState extends State<StudentFormPage> {
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Aluno cadastrado com sucesso!'),
-            backgroundColor: AppColors.statusGreen,
+          SnackBar(
+            content: Text(
+              synced
+                  ? 'Aluno cadastrado com sucesso na API!'
+                  : 'Sem conexão com a API agora — aluno salvo localmente '
+                      '(cache) e será exibido normalmente no app.',
+            ),
+            backgroundColor: synced ? AppColors.statusGreen : AppColors.statusOrange,
+            duration: Duration(seconds: synced ? 3 : 5),
           ),
         );
         Navigator.of(context).pop();

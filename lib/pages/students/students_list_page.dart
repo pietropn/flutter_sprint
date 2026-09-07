@@ -69,9 +69,31 @@ class StudentsListPage extends StatelessWidget {
                                     ),
                                   ),
                                 ),
-                                title: Text(
-                                  s.name,
-                                  style: const TextStyle(fontWeight: FontWeight.bold),
+                                title: Row(
+                                  children: [
+                                    Flexible(
+                                      child: Text(
+                                        s.name,
+                                        style: const TextStyle(fontWeight: FontWeight.bold),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                    if (s.id.startsWith('local-')) ...[
+                                      const SizedBox(width: 6),
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                        decoration: BoxDecoration(
+                                          color: AppColors.statusOrange.withValues(alpha: 0.15),
+                                          borderRadius: BorderRadius.circular(20),
+                                          border: Border.all(color: AppColors.statusOrange),
+                                        ),
+                                        child: const Text(
+                                          'não sincronizado',
+                                          style: TextStyle(fontSize: 9, color: AppColors.statusOrange),
+                                        ),
+                                      ),
+                                    ],
+                                  ],
                                 ),
                                 subtitle: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -106,12 +128,18 @@ class StudentsListPage extends StatelessWidget {
 
                                     if (confirm == true) {
                                       try {
-                                        await prov.remove(s.id);
+                                        final synced = await prov.remove(s.id);
                                         if (ctx.mounted) {
                                           ScaffoldMessenger.of(ctx).showSnackBar(
-                                            const SnackBar(
-                                              content: Text('Aluno removido com sucesso'),
-                                              backgroundColor: AppColors.statusGreen,
+                                            SnackBar(
+                                              content: Text(
+                                                synced
+                                                    ? 'Aluno removido com sucesso na API'
+                                                    : 'Aluno removido apenas localmente (sem conexão com a API agora)',
+                                              ),
+                                              backgroundColor: synced
+                                                  ? AppColors.statusGreen
+                                                  : AppColors.statusOrange,
                                             ),
                                           );
                                         }

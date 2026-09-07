@@ -30,7 +30,14 @@ class Student {
         'turma': turma,
       };
 
-  /// Mapeamento para/de API Spring Boot (Sprint_microservico - /alunos)
+  /// Mapeamento para/de API Spring Boot (Sprint_microservico - /api/v1/alunos)
+  ///
+  /// IMPORTANTE: o AlunoDto real da API só possui nome/cpf/email — não há
+  /// campo "turma" na entidade Aluno. O vínculo aluno-turma nessa API é
+  /// feito por uma entidade separada, Matrícula (/api/v1/matriculas, com
+  /// alunoId + turmaId). Por isso o campo "turma" abaixo é enviado apenas
+  /// por compatibilidade e é ignorado pela API (Jackson descarta campos
+  /// desconhecidos por padrão) — ele não fica persistido no backend.
   factory Student.fromApiJson(Map<String, dynamic> m) => Student(
         id: m['id']?.toString() ?? '',
         name: m['nome'] ?? m['name'] ?? '',

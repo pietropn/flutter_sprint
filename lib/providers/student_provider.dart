@@ -55,8 +55,10 @@ class StudentProvider with ChangeNotifier {
     }
   }
 
-  /// Adiciona um novo aluno com nome, CPF, email e turma
-  Future<void> add({
+  /// Adiciona um novo aluno com nome, CPF, email e turma.
+  /// Retorna `true` se foi realmente enviado para a API, ou `false` se
+  /// ficou salvo apenas localmente (API indisponível no momento).
+  Future<bool> add({
     required String name,
     required String cpf,
     required String email,
@@ -72,10 +74,13 @@ class StudentProvider with ChangeNotifier {
         email: email,
         turma: turma,
       );
-      final created = await _repo.create(s);
-      _items.add(created);
-      _isOfflineData = false;
+      final result = await _repo.create(s);
+      _items.add(result.student);
+      if (!result.synced) {
+        _isOfflineData = true;
+      }
       notifyListeners();
+      return result.synced;
     } catch (e) {
       _error = e.toString();
       rethrow;
@@ -84,14 +89,19 @@ class StudentProvider with ChangeNotifier {
     }
   }
 
-  /// Remove um aluno pelo ID
-  Future<void> remove(String id) async {
+  /// Remove um aluno pelo ID. Retorna `true` se a remoção foi
+  /// sincronizada com a API, ou `false` se só foi removida localmente.
+  Future<bool> remove(String id) async {
     _setLoading(true);
     _error = null;
     try {
-      await _repo.delete(id);
+      final synced = await _repo.delete(id);
       _items.removeWhere((it) => it.id == id);
+      if (!synced) {
+        _isOfflineData = true;
+      }
       notifyListeners();
+      return synced;
     } catch (e) {
       _error = e.toString();
       rethrow;
