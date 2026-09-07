@@ -1,7 +1,5 @@
 # Euro Tech! — App de Gestão de Alunos (Flutter)
 
-Sprint do Diogo (terceira entrega).
-
 ## 🛠️ Tecnologias utilizadas
 
 - **Flutter** (Dart SDK `^3.11.5` — recomendado Flutter 3.35 ou superior, canal `stable`)

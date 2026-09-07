@@ -3,8 +3,9 @@ import 'package:provider/provider.dart';
 import 'providers/auth_provider.dart';
 import 'providers/theme_provider.dart';
 import 'routes.dart';
-import 'pages/login/login_page.dart';
-import 'pages/home/home_page.dart';
+import 'theme/app_theme.dart';
+import 'pages/splash/splash_page.dart';
+import 'widgets/main_shell.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -18,23 +19,14 @@ class MyApp extends StatelessWidget {
       title: 'Euro Tech!',
       debugShowCheckedModeBanner: false,
       themeMode: theme.themeMode,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.blue,
-          brightness: Brightness.light,
-        ),
-        useMaterial3: true,
-      ),
-      darkTheme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.blue,
-          brightness: Brightness.dark,
-        ),
-        useMaterial3: true,
-      ),
+      theme: AppTheme.light(),
+      darkTheme: AppTheme.dark(),
       routes: appRoutes,
-      // Se a sessão estiver persistida no SharedPreferences, vai direto para a HomePage
-      home: auth.isLogged ? const HomePage() : const LoginPage(),
+      // Se a sessão estiver persistida no SharedPreferences, vai direto
+      // para o shell principal (bottom nav); caso contrário, mostra a
+      // tela inicial ("Página inicial mobile" do protótipo) com o botão
+      // de login.
+      home: auth.isLogged ? const MainShell() : const SplashPage(),
     );
   }
 }

@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
+import '../../models/role.dart';
+import '../../theme/app_colors.dart';
 import '../../widgets/custom_text_field.dart';
 import '../../widgets/primary_button.dart';
+import '../../widgets/euro_tech_logo.dart';
 import '../../utils/validators.dart';
 
 class LoginPage extends StatefulWidget {
@@ -17,6 +20,7 @@ class _LoginPageState extends State<LoginPage> {
   late final TextEditingController _email;
   final _pass = TextEditingController();
   bool _remember = false;
+  Role _role = Role.gestor;
 
   @override
   void initState() {
@@ -41,16 +45,17 @@ class _LoginPageState extends State<LoginPage> {
         _email.text.trim(),
         _pass.text.trim(),
         remember: _remember,
+        role: _role,
       );
       if (mounted) {
-        Navigator.of(context).pushReplacementNamed('/home');
+        Navigator.of(context).pushNamedAndRemoveUntil('/home', (route) => false);
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(e.toString()),
-            backgroundColor: Colors.red.shade700,
+            backgroundColor: AppColors.statusRed,
           ),
         );
       }
@@ -62,6 +67,7 @@ class _LoginPageState extends State<LoginPage> {
     final auth = Provider.of<AuthProvider>(context);
 
     return Scaffold(
+      backgroundColor: AppColors.background,
       appBar: AppBar(
         title: const Text('Euro Tech!'),
         actions: [
@@ -76,27 +82,30 @@ class _LoginPageState extends State<LoginPage> {
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(20),
           child: Card(
-            elevation: 4,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            elevation: 1,
             child: Padding(
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.all(24),
               child: ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 420),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(Icons.school, size: 48, color: Colors.blue),
-                    const SizedBox(height: 12),
+                    const EuroTechLogo(size: 68),
+                    const SizedBox(height: 16),
                     const Text(
-                      'BEM-VINDO(A)',
-                      style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                      'BEM VINDO(A)',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.primaryBlue,
+                      ),
                     ),
                     const SizedBox(height: 4),
                     const Text(
-                      'Acesse o sistema educacional Euro Tech',
-                      style: TextStyle(fontSize: 13, color: Colors.grey),
+                      'Preencha seus dados',
+                      style: TextStyle(fontSize: 13, color: AppColors.textMuted),
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 20),
                     Form(
                       key: _formKey,
                       child: Column(
@@ -113,9 +122,37 @@ class _LoginPageState extends State<LoginPage> {
                             validator: (v) => validateMinLength(v, 4),
                             obscure: true,
                           ),
+                          const SizedBox(height: 4),
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              'Entrar como',
+                              style: TextStyle(fontSize: 12, color: Colors.grey.shade700),
+                            ),
+                          ),
+                          const SizedBox(height: 6),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: _RoleChip(
+                                  label: 'Gestor',
+                                  selected: _role == Role.gestor,
+                                  onTap: () => setState(() => _role = Role.gestor),
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: _RoleChip(
+                                  label: 'Professor',
+                                  selected: _role == Role.professor,
+                                  onTap: () => setState(() => _role = Role.professor),
+                                ),
+                              ),
+                            ],
+                          ),
                           CheckboxListTile(
                             contentPadding: EdgeInsets.zero,
-                            title: const Text('Lembrar e-mail', style: TextStyle(fontSize: 14)),
+                            title: const Text('Manter login', style: TextStyle(fontSize: 14)),
                             value: _remember,
                             onChanged: (val) => setState(() => _remember = val ?? false),
                             controlAffinity: ListTileControlAffinity.leading,
@@ -131,7 +168,7 @@ class _LoginPageState extends State<LoginPage> {
                               padding: const EdgeInsets.only(top: 8),
                               child: Text(
                                 auth.error!,
-                                style: const TextStyle(color: Colors.red),
+                                style: const TextStyle(color: AppColors.statusRed),
                               ),
                             ),
                         ],
@@ -141,6 +178,38 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
             ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _RoleChip extends StatelessWidget {
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+
+  const _RoleChip({required this.label, required this.selected, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(10),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 10),
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: selected ? AppColors.primaryBlue : const Color(0xFFEFF2F8),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            color: selected ? Colors.white : AppColors.textMuted,
+            fontWeight: FontWeight.w600,
+            fontSize: 13,
           ),
         ),
       ),

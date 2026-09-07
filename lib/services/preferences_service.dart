@@ -136,4 +136,26 @@ class PreferencesService {
   Future<void> clearCachedStudents() async {
     await _preferences.remove(AppConstants.keyCachedStudents);
   }
+
+  // ==========================================
+  // 5. FICHA COMPLEMENTAR DO ALUNO (campos do protótipo que a API não
+  //    suporta ainda: endereço, RG, responsável, etc.) — persistida
+  //    localmente por aluno, indexada pelo e-mail cadastrado.
+  // ==========================================
+
+  Future<void> saveFichaAluno(String chave, Map<String, String> dados) async {
+    final raw = _preferences.getString(AppConstants.keyFichasAlunos);
+    final Map<String, dynamic> todas = raw != null ? Map<String, dynamic>.from(jsonDecode(raw)) : {};
+    todas[chave] = dados;
+    await _preferences.setString(AppConstants.keyFichasAlunos, jsonEncode(todas));
+  }
+
+  Map<String, String>? getFichaAluno(String chave) {
+    final raw = _preferences.getString(AppConstants.keyFichasAlunos);
+    if (raw == null) return null;
+    final todas = Map<String, dynamic>.from(jsonDecode(raw));
+    final ficha = todas[chave];
+    if (ficha == null) return null;
+    return Map<String, String>.from(ficha as Map);
+  }
 }

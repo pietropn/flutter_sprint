@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/student_provider.dart';
+import '../../theme/app_colors.dart';
 
 class StudentsListPage extends StatelessWidget {
   const StudentsListPage({super.key});
@@ -26,15 +27,15 @@ class StudentsListPage extends StatelessWidget {
             Container(
               width: double.infinity,
               padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-              color: Colors.amber.shade100,
+              color: AppColors.accentYellow.withValues(alpha: 0.15),
               child: Row(
                 children: [
-                  Icon(Icons.offline_pin, color: Colors.amber.shade900, size: 18),
+                  Icon(Icons.offline_pin, color: AppColors.darkBlue, size: 18),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
                       'Dados carregados do cache local (SharedPreferences).',
-                      style: TextStyle(fontSize: 12, color: Colors.amber.shade900),
+                      style: TextStyle(fontSize: 12, color: AppColors.darkBlue),
                     ),
                   ),
                 ],
@@ -59,12 +60,12 @@ class StudentsListPage extends StatelessWidget {
                               margin: const EdgeInsets.symmetric(vertical: 6),
                               child: ListTile(
                                 leading: CircleAvatar(
-                                  backgroundColor: Colors.blue.shade100,
+                                  backgroundColor: AppColors.primaryBlue.withValues(alpha: 0.12),
                                   child: Text(
                                     s.name.isNotEmpty ? s.name[0].toUpperCase() : 'A',
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
-                                      color: Colors.blue.shade900,
+                                      color: AppColors.primaryBlue,
                                     ),
                                   ),
                                 ),
@@ -82,7 +83,7 @@ class StudentsListPage extends StatelessWidget {
                                 ),
                                 isThreeLine: s.cpf.isNotEmpty,
                                 trailing: IconButton(
-                                  icon: const Icon(Icons.delete, color: Colors.red),
+                                  icon: const Icon(Icons.delete, color: AppColors.statusRed),
                                   onPressed: () async {
                                     final confirm = await showDialog<bool>(
                                       context: ctx,
@@ -95,7 +96,7 @@ class StudentsListPage extends StatelessWidget {
                                             child: const Text('Cancelar'),
                                           ),
                                           FilledButton(
-                                            style: FilledButton.styleFrom(backgroundColor: Colors.red),
+                                            style: FilledButton.styleFrom(backgroundColor: AppColors.statusRed),
                                             onPressed: () => Navigator.of(dCtx).pop(true),
                                             child: const Text('Excluir'),
                                           ),
@@ -110,7 +111,7 @@ class StudentsListPage extends StatelessWidget {
                                           ScaffoldMessenger.of(ctx).showSnackBar(
                                             const SnackBar(
                                               content: Text('Aluno removido com sucesso'),
-                                              backgroundColor: Colors.green,
+                                              backgroundColor: AppColors.statusGreen,
                                             ),
                                           );
                                         }
@@ -119,7 +120,7 @@ class StudentsListPage extends StatelessWidget {
                                           ScaffoldMessenger.of(ctx).showSnackBar(
                                             SnackBar(
                                               content: Text(e.toString()),
-                                              backgroundColor: Colors.red,
+                                              backgroundColor: AppColors.statusRed,
                                             ),
                                           );
                                         }

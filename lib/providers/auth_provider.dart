@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/user.dart';
+import '../models/role.dart';
 import '../repositories/auth_repository.dart';
 import '../services/preferences_service.dart';
 
@@ -40,7 +41,12 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
-  Future<void> login(String email, String password, {bool remember = false}) async {
+  Future<void> login(
+    String email,
+    String password, {
+    bool remember = false,
+    Role role = Role.gestor,
+  }) async {
     _setLoading(true);
     _error = null;
     try {
@@ -53,7 +59,9 @@ class AuthProvider with ChangeNotifier {
       }
 
       _token = token;
-      _user = User.fromJson(userJson);
+      // O papel (Gestor/Professor) é escolhido localmente na tela de login,
+      // já que a API do projeto ainda não possui esse conceito.
+      _user = User.fromJson({...userJson, 'role': role.asString});
 
       // Persiste a sessão no SharedPreferences (Manter usuário logado)
       await _repo.saveSession(_user!, _token!);
