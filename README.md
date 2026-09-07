@@ -105,7 +105,6 @@ A URL da API **não é fixa no código** — ela é definida em tempo de execuç
 1. **Pelo próprio app**: abra a tela **Configurações** (ícone de engrenagem na tela de Login ou no menu do app), informe a URL base da API (ex.: `http://10.0.2.2:8080` para emulador Android acessando `localhost` da máquina host, ou `http://192.168.x.x:8080` para dispositivo físico na mesma rede) e toque em salvar.
 2. **Valor padrão**: caso nenhuma URL tenha sido configurada ainda, o app utiliza o valor definido em [`lib/utils/constants.dart`](lib/utils/constants.dart) (`AppConstants.defaultApiUrl`, atualmente `http://localhost:8080`). Edite essa constante caso queira alterar o padrão de fábrica antes de compilar.
 
-> ⚠️ Atenção: emuladores Android **não enxergam `localhost` da máquina host diretamente** — use `10.0.2.2` no lugar de `localhost` nesse caso. iOS Simulator e Chrome (web) conseguem usar `localhost` normalmente.
 
 ---
 
