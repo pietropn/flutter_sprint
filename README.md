@@ -18,7 +18,7 @@ Funcionalidades cobertas:
 - Validação no frontend espelhando as regras do backend (CPF com 11 dígitos numéricos, e-mail válido, campos obrigatórios).
 - Tratamento resiliente de falhas de comunicação (`SocketException`, timeouts e códigos de erro HTTP), com fallback para os dados em cache local quando a API está indisponível.
 
-## 💾 Persistência Local e Configuração (10 Pontos)
+## 💾 Persistência Local e Configuração
 
 Implementado centralizadamente em [`lib/services/preferences_service.dart`](lib/services/preferences_service.dart), usando `SharedPreferences`:
 
