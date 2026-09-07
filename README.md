@@ -114,3 +114,17 @@ A URL da API **não é fixa no código** — ela é definida em tempo de execuç
 - Victor Andrade Baptista de Sousa (RM555902)
 - Jhonatham Jesus de Souza Barros (RM559114)
 - Silvio Toshiaki Yokoyama (RM556716)
+
+---
+
+## - Prints do App
+![Tela](./img%20app/WhatsApp%20Image%202026-09-06%20at%2023.21.48.jpeg)
+![Tela](./img%20app/WhatsApp%20Image%202026-09-06%20at%2023.22.10.jpeg)
+![Tela](./img%20app/WhatsApp%20Image%202026-09-06%20at%2023.25.14.jpeg)
+![Tela](./img%20app/WhatsApp%20Image%202026-09-06%20at%2023.25.39.jpeg)
+![Tela](./img%20app/WhatsApp%20Image%202026-09-06%20at%2023.26.00.jpeg)
+![Tela](./img%20app/WhatsApp%20Image%202026-09-06%20at%2023.26.17.jpeg)
+![Tela](./img%20app/WhatsApp%20Image%202026-09-06%20at%2023.26.41.jpeg)
+![Tela](./img%20app/WhatsApp%20Image%202026-09-06%20at%2023.27.00.jpeg)
+![Tela](./img%20app/WhatsApp%20Image%202026-09-06%20at%2023.27.18.jpeg)
+
